@@ -1,16 +1,23 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { HOSTING_BUCKET_NAME } from '../constants';
 
 export class InfrawebscaleCdkStack extends cdk.Stack {
+  public readonly bucket: s3.Bucket;
+  
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
-
-    // example resource
-    // const queue = new sqs.Queue(this, 'InfrawebscaleCdkQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    this.bucket = new s3.Bucket(this, HOSTING_BUCKET_NAME, {
+      versioned: false,
+      bucketName: HOSTING_BUCKET_NAME,
+      autoDeleteObjects: true,
+      publicReadAccess: true,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
+      websiteIndexDocument: 'index.html',
+      websiteErrorDocument: 'error/index.html',
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    });
   }
 }
